@@ -3,13 +3,17 @@ import discord
 from discord.ext import commands
 import sqlite3
 import random
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
 
 bot = commands.Bot(command_prefix='?', description="Bot multifonctions ! Gaming, modération et tout",intents=intents)
-conn = sqlite3.connect("M:/Dev/Projects/Wyn/wyn.db")
+conn = sqlite3.connect("E:/Dev/Wyn/wyn.db")
 
 DAILYBONUS = 100 # 100
 DAILYCOOLDOWN = 86400 # 86400
@@ -189,4 +193,4 @@ async def shop(ctx):
 
 
 
-bot.run("OTM4MDY4MTQzNTgxMDU3MDM1.Yfk6CQ.qGLYH1UGcFWcAbDrXIbCdA6ixpM")
+bot.run(os.getenv(TOKEN))
