@@ -169,17 +169,35 @@ async def xp(ctx):
         lvl = cursor.fetchall()
         cursor.execute("""SELECT xptonextlvl FROM members WHERE id = :uuid""",{"uuid":ctx.author.id})
         xptonextlevel = cursor.fetchall()
-        await ctx.send("Tu es actuellement niveau **" + str(lvl[0][0]) + "**, avec **" + str(xp[0][0]) + "** points d'xp. Pour atteindre le niveau suivant, il va te falloir **" + str(xptonextlevel[0][0]) + "** points d'xp.")        
+        await ctx.send("Niveau : **" + str(lvl[0][0]) + "** (Points d'xp : **" + str(xp[0][0]) + "**)\nNiveau suivant dans : **" + str(xptonextlevel[0][0]) + "** points d'xp.")        
 
 
 @bot.command()
-async def give_coins(ctx):
+async def give_coins(ctx,receiver,amount):
     try:
         exists = ctx.author.id in conn.cursor().execute("""SELECT id FROM members where id = :uuid""",{"uuid" : ctx.author.id}).fetchone()
     except TypeError:
         exists = False
     if exists:
-        pass
+        sender = ctx.author
+        await ctx.send("sender : " + str(sender) + "receiver : " + str(receiver))
+        print(sender)
+        print(receiver)
+        cursor = conn.cursor()
+        cursor.execute("""SELECT coins FROM members WHERE id = :uuid""",{"uuid" : ctx.author.id})
+        sender_coins = cursor.fetchall()
+        print(amount)
+        print(sender_coins[0][0])
+        if sender_coins[0][0] >= int(amount):
+            print("YES")
+            cursor = conn.cursor()
+            cursor.execute("""SELECT coins FROM members WHERE id = :uuid""",{"uuid" : ctx.author.id})
+            receiver_coins = cursor.fetchall()
+            cursor.execute("""UPDATE members SET coins = :coins WHERE id = :uuid""",{"uuid" : receiver.id, "coins" : receiver_coins[0][0] + amount})
+            cursor.execute("""UPDATE members SET coins = :coins WHERE id = :uuid""",{"uuid" : ctx.author.id, "coins" : sender_coins[0][0] - amount})
+        else:
+            print("NO ")
+
 
 @bot.command()
 async def shop(ctx):
